@@ -9,108 +9,99 @@ import events
 
 def run():
     pygame.init()
-    # Determine screen dimensions
-    screenWidth = 1200
-    screenHeight = 800
-    # extra_space = 220
 
-    #  game colors
-    background_color = (255, 189, 216)
-    color_living_cell = (255, 81, 72)
-    color_grid = (255, 220, 225)
+    screen_width = 1200
+    screen_height = 700
+    # screen_width = 160
+    # screen_height = 160
 
-    screen = pygame.display.set_mode((screenWidth, screenHeight))
-    pygame.display.set_caption("Conway's game of Life")
+    # game colors
+    background_color = (130, 228, 228)
+    color_living_cell = (245, 110, 202)
+    color_grid = (204, 244, 244)
+
+    pygame.display.init()
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Conway's GameofLife")
 
     clock = pygame.time.Clock()
-
-    # Grid dimensions
-    CELLSIZE = 15
-    GRID_WIDTH = (screenWidth) // CELLSIZE
-    GRID_HEIGHT = screenHeight // CELLSIZE
-
-    # Create the grid
-    grid = np.zeros((GRID_HEIGHT, GRID_WIDTH), dtype=int)
-
-    cells = Cells(screenWidth, grid, CELLSIZE)
-
-    draw_grid = Grid(
-        screen,
-        cells.sparse_cells,
-        CELLSIZE,
-        color_grid=color_grid,
-        color_live=color_living_cell,
-        color_dead=background_color,
-    )
-
-    game_controls = GameControls(
-        screen, screenWidth, screenHeight, grid, draw_grid, CELLSIZE
-    )
-
     pygame.time.set_timer(events.STEP_EVENT, 150)
 
-    # Main game loop
+    viewScale = 20
+
+    # update_cells_event = events.Event()
+    cells = Cells(screen)
+
+    grid = Grid(
+        screen=screen,
+        color_grid=color_grid,
+        color_living_cell=color_living_cell,
+        viewScale=viewScale,
+        # update_cells_event=update_cells_event,
+    )
+
+    controls = GameControls(screen)
+
     running = True
     while running:
-        # update screen at 60 (or 120) FPS
+        # update at every 120 FPS
         clock.tick(120)
 
-        # Fill screen with background_color
+        # fill screen surface with background color
         screen.fill(background_color)
 
         # process all events
         for event in pygame.event.get():
-            # print(event.type)
-            # mouse_pos = pygame.mouse.get_pos()
-            # print(f"Mouse Position: {mouse_pos}")
             cells.handle_event(event)
-            # game_controls.slider.handle_event(event, )
-            # sliderButton.handle_event(event)
 
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
 
-            if event.type not in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION, pygame.MOUSEWHEEL]:
+            if event.type not in [
+                pygame.MOUSEBUTTONDOWN,
+                pygame.MOUSEBUTTONUP,
+                pygame.MOUSEMOTION,
+                pygame.MOUSEWHEEL
+            ]:
                 continue
 
-            action = game_controls.process_mouse_input(event, cells.sparse_cells)
+            action = controls.process_mouse_input(
+                event,
+                sparse_cells=cells.sparse_cells,
+                grid=grid
+            )
 
             if action is None:
                 continue
 
-            action_key, grid_pos = action
+            action_key, value = action
 
-            if action_key == "add_cell":
-                cells.add_cell(grid_pos)
+            if action_key == "is_playing":
+                cells.is_playing = controls.is_playing
 
-            elif action_key == "remove_cell":
-                cells.remove_cell(grid_pos)
+            elif action_key == "panning":
+                dx, dy = value
+                grid.adjust_camera_view(dx=dx, dy=dy)
 
-            elif action_key == "is_playing":
-                cells.is_playing = game_controls.is_playing
-
-            elif action_key == "reset":
-                cells.reset()
-
-            elif action_key == "clear":
-                cells.clear()
-
-            elif action_key == "save":
-                cells.save("saved_state/saved_state.json")
+            elif action_key == "viewpoint":
+                grid.adjust_view_scale(event.y)
 
             elif action_key == "load":
-                cells.load("saved_state/saved_state.json")
+                cells.load("saved_state/gosper_glider_gun.json")
 
-        # -Update the current grid with the new one
-        draw_grid.update(updated_cells=cells.sparse_cells)
+        # update the grid to replace with new grid
+        grid.update(new_sparse_cells=cells.sparse_cells)
+        # print(cells.get_live_neightbors())
 
-        # Draw the buttons (play, pause, reset, clear, save, slider)
-        # game_controls.draw_container()
-        game_controls.draw_buttons()
+        controls.draw_buttons()
 
-        # -Update display
+        # update display (update and flip are the same,
+        # tho update can be used for spot updates too)
         pygame.display.flip()
 
-    # Quit the game
+    # quit the game
     pygame.quit()
     sys.exit()
