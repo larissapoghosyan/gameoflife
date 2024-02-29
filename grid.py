@@ -1,5 +1,4 @@
 import pygame
-import events
 from typing import Tuple, Dict
 
 
@@ -10,15 +9,11 @@ class Grid(pygame.sprite.Sprite):
         color_grid: Tuple[int, int, int],
         color_living_cell: Tuple[int, int, int],
         viewScale: int,
-        # update_cells_event: events.Event,
     ):
         super().__init__()
         self._mouse_pos: Tuple[int, int] = None
 
         self.sparse_cells: Dict[Tuple[int, int], int] = {}
-
-        # self.update_cells_event = update_cells_event
-        # self.update_cells_event.add_listener(self.update_sparse_cells)
 
         self.screen = screen
         self.viewScale = viewScale
@@ -26,20 +21,11 @@ class Grid(pygame.sprite.Sprite):
 
         self.camera_x = 0
         self.camera_y = 0
-        # calculating grid positions based on camera and offset
-        # self.start_pos_x, self.end_pos_x, self.start_pos_y, self.end_pos_y = self.calc_grid_dimensions()
 
         self.color_grid = color_grid
         self.color_living_cell = color_living_cell
 
-    # def update_sparse_cells(
-    #         self,
-    #         updated_sparse_cells: Dict[Tuple[int, int], int]
-    # ):
-    #     self.sparse_cells = updated_sparse_cells
-
     def update(self, new_sparse_cells):
-        # self.adjust_camera_view(0, 0)
         self.draw(new_sparse_cells)
 
     @property
@@ -61,12 +47,9 @@ class Grid(pygame.sprite.Sprite):
         self.viewScale = min(500, self.viewScale)
         self.viewScale = max(3, self.viewScale)
 
-        # print(original_view_scale, self.viewScale, 'viewscale')
-
         mouse_x, mouse_y = self._mouse_pos
 
         # Calculate original world position of the mouse
-        # mouse_x, mouse_y = mouse_pos
         pre_zoom_x = (mouse_x + self.camera_x) / original_view_scale
         pre_zoom_y = (mouse_y + self.camera_y) / original_view_scale
 
@@ -79,8 +62,6 @@ class Grid(pygame.sprite.Sprite):
 
         x = round(world_shift_x * original_view_scale + 1)
         y = round(world_shift_y * original_view_scale + 1)
-        # print(x, y, 'shift')
-        # print(self.camera_x + x, self.camera_y + y, "cam")
         self.adjust_camera_view(dx=x, dy=y)
         # self.camera_x = x
         # self.camera_y = y
@@ -103,9 +84,7 @@ class Grid(pygame.sprite.Sprite):
         if new_sparse_cells:
             self.sparse_cells = new_sparse_cells
 
-        # self.pos = []
         start_pos_y, end_pos_y, start_pos_x, end_pos_x = self.calc_grid_dimensions()
-        # print(self.calc_grid_dimensions())
 
         for row in range(start_pos_y, end_pos_y):
             for col in range(start_pos_x, end_pos_x):
@@ -116,8 +95,6 @@ class Grid(pygame.sprite.Sprite):
                     self.scaled_cell_size,
                     self.scaled_cell_size
                 )
-
-                # self.pos.append((row, col))2
 
                 if new_sparse_cells.get((row, col)):
                     pygame.draw.rect(self.screen, self.color_living_cell, rect)

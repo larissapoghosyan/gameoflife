@@ -132,8 +132,6 @@ class GameControls:
             rel_y = mouse_y - self.buffer_space
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                # f(mouse_y, mouse_x)
-
                 if self.play_button_rect.collidepoint(
                     (rel_x, rel_y)
                 ) or self.pause_button_rect.collidepoint((rel_x, rel_y)):

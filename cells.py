@@ -9,10 +9,8 @@ class Cells(pygame.sprite.Sprite):
     def __init__(
         self,
         screen: pygame.Surface,
-        # update_cells_event: events.Event
     ):
         super().__init__()
-        # self.update_cells_event = update_cells_event
         self.screen = screen
         self.sparse_cells: Dict[Tuple[int, int], int] = {}
         self.initial_input: Dict[Tuple[int, int], int] = {}
@@ -24,11 +22,11 @@ class Cells(pygame.sprite.Sprite):
         # self.sparse_cells[(0, 1)] = 1
         # self.sparse_cells[(2, 0)] = 1
         # self.sparse_cells[(0, 2)] = 1
-        self.sparse_cells[(0, 1)] = 1
-        self.sparse_cells[(1, 2)] = 1
-        self.sparse_cells[(2, 2)] = 1
-        self.sparse_cells[(2, 1)] = 1
-        self.sparse_cells[(2, 0)] = 1
+        # self.sparse_cells[(0, 1)] = 1
+        # self.sparse_cells[(1, 2)] = 1
+        # self.sparse_cells[(2, 2)] = 1
+        # self.sparse_cells[(2, 1)] = 1
+        # self.sparse_cells[(2, 0)] = 1
 
         # self.sparse_cells[(1, 0)] = 1
         # self.sparse_cells[(1, 2)] = 1
@@ -61,9 +59,6 @@ class Cells(pygame.sprite.Sprite):
         return neighbors
 
     def update(self):
-        # passes sparse_cells to event triggerer for event
-        # listener grid to get updated sparse cells at every iteration
-        # self.update_cells_event.trigger_event(self.sparse_cells)
         if self.is_playing:
             self.step()
 

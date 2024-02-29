@@ -1,6 +1,5 @@
 import sys
 import pygame
-import numpy as np
 from cells import Cells
 from grid import Grid
 from game_controls import GameControls
@@ -12,8 +11,6 @@ def run():
 
     screen_width = 1200
     screen_height = 700
-    # screen_width = 160
-    # screen_height = 160
 
     # game colors
     background_color = (130, 228, 228)
@@ -29,7 +26,6 @@ def run():
 
     viewScale = 20
 
-    # update_cells_event = events.Event()
     cells = Cells(screen)
 
     grid = Grid(
@@ -37,7 +33,6 @@ def run():
         color_grid=color_grid,
         color_living_cell=color_living_cell,
         viewScale=viewScale,
-        # update_cells_event=update_cells_event,
     )
 
     controls = GameControls(screen)
@@ -92,9 +87,7 @@ def run():
             elif action_key == "load":
                 cells.load("saved_state/gosper_glider_gun.json")
 
-        # update the grid to replace with new grid
         grid.update(new_sparse_cells=cells.sparse_cells)
-        # print(cells.get_live_neightbors())
 
         controls.draw_buttons()
 
