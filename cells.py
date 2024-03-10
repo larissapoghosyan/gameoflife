@@ -9,6 +9,7 @@ class Cells(pygame.sprite.Sprite):
     def __init__(
         self,
         screen: pygame.Surface,
+        grid: 'Grid'
     ):
         super().__init__()
         self.screen = screen
@@ -16,25 +17,9 @@ class Cells(pygame.sprite.Sprite):
         self.initial_input: Dict[Tuple[int, int], int] = {}
 
         self.is_playing = False
+        self.next_state = None
 
-        # self.sparse_cells[(0, 0)] = 1
-        # self.sparse_cells[(1, 0)] = 1
-        # self.sparse_cells[(0, 1)] = 1
-        # self.sparse_cells[(2, 0)] = 1
-        # self.sparse_cells[(0, 2)] = 1
-        # self.sparse_cells[(0, 1)] = 1
-        # self.sparse_cells[(1, 2)] = 1
-        # self.sparse_cells[(2, 2)] = 1
-        # self.sparse_cells[(2, 1)] = 1
-        # self.sparse_cells[(2, 0)] = 1
-
-        # self.sparse_cells[(1, 0)] = 1
-        # self.sparse_cells[(1, 2)] = 1
-        # self.sparse_cells[(2, 1)] = 1
-        # self.sparse_cells[(2, 2)] = 1
-        # self.sparse_cells[(3, 1)] = 1
-
-        # (1, 0), (1, 2), (2, 1), (2, 2), , (3, 1)
+        self.grid = grid
 
     def handle_event(self, event):
         if event.type == events.STEP_EVENT:
@@ -82,31 +67,60 @@ class Cells(pygame.sprite.Sprite):
         self.sparse_cells = updated_sparse_cells
 
     def add_cell(self, pos: Tuple[int, int]):
-        pass
+        self.sparse_cells[pos] = 1
+        self.initial_input = self.sparse_cells.copy()
 
     def remove_cell(self, pos: Tuple[int, int]):
-        pass
+        del self.sparse_cells[pos]
 
     def reset(self):
-        pass
+        self.sparse_cells = self.initial_input.copy()
 
     def clear(self):
-        pass
+        self.sparse_cells = {}
+
+    def next(self):
+        self.is_playing = False
+        self.step()
 
     def save(self, filename: str):
-        pass
+        save_state = [k for k, _ in self.sparse_cells.items()]
+        with open(filename, "w") as f:
+            save_dict = {
+                'saved_state': save_state,
+                'camera_pos': (self.grid.camera_x, self.grid.camera_y),
+                'viewScale': self.grid.viewScale,
+                'version': 1.0
+            }
+            json.dump(save_dict, f)
 
     def load(self, filename: str):
         try:
             with open(filename, "r") as f:
-                loaded_list: List[Tuple[int, int]] = json.load(f)
+                loaded_data = json.load(f)
 
             # LEGACY COMPATIBILITY LAYER
-            if isinstance(loaded_list, dict):
-                print(
-                    "warning: loading from the old format, please upgrade to our more efficient format"
-                )
-                loaded_list = [eval(k) for k, _ in loaded_list.items()]
+            if isinstance(loaded_data, dict):
+                try:
+                    version = loaded_data.get("version", 0)
+                    if version == 1.0:
+                        # handle data with version 1.0
+                        loaded_list = loaded_data['saved_state']
+                        self.grid.camera_x, self.grid.camera_y = loaded_data['camera_pos']
+                        self.grid.viewScale = loaded_data['viewScale']
+                    elif version == 0:
+                        # handle data with no version number (version 0)
+                        print("Warning: loading from the old format, please upgrade to the more efficient format")
+                        loaded_list = [eval(k) for k, _ in loaded_data.items()]
+                except KeyError:
+                    print("Error: Missing required keys in loaded data")
+                    return
+            elif isinstance(loaded_data, list):
+                # handle list input
+                loaded_list = loaded_data
+            else:
+                print("Error: unrecognized data format")
+                return
 
             loaded_dict: Dict[Tuple[int, int], int] = {tuple(k): 1 for k in loaded_list}
 

@@ -24,9 +24,7 @@ def run():
     clock = pygame.time.Clock()
     pygame.time.set_timer(events.STEP_EVENT, 150)
 
-    viewScale = 20
-
-    cells = Cells(screen)
+    viewScale = 15
 
     grid = Grid(
         screen=screen,
@@ -35,12 +33,14 @@ def run():
         viewScale=viewScale,
     )
 
+    cells = Cells(screen, grid)
+
     controls = GameControls(screen)
 
     running = True
     while running:
         # update at every 120 FPS
-        clock.tick(120)
+        clock.tick(30)
 
         # fill screen surface with background color
         screen.fill(background_color)
@@ -77,6 +77,27 @@ def run():
             if action_key == "is_playing":
                 cells.is_playing = controls.is_playing
 
+            elif action_key == "add_cell":
+                cells.add_cell(pos=value)
+
+            elif action_key == "remove_cell":
+                cells.remove_cell(pos=value)
+
+            elif action_key == "reset":
+                cells.reset()
+
+            elif action_key == "clear":
+                cells.clear()
+
+            elif action_key == "next_state":
+                cells.next()
+
+            elif action_key == "save":
+                cells.save("saved_state/saved_state.json")
+
+            elif action_key == "load":
+                cells.load("saved_state/saved_state.json")
+
             elif action_key == "panning":
                 dx, dy = value
                 grid.adjust_camera_view(dx=dx, dy=dy)
@@ -84,10 +105,7 @@ def run():
             elif action_key == "viewpoint":
                 grid.adjust_view_scale(event.y)
 
-            elif action_key == "load":
-                cells.load("saved_state/gosper_glider_gun.json")
-
-        grid.update(new_sparse_cells=cells.sparse_cells)
+        grid.update(updated_sparse_cells=cells.sparse_cells)
 
         controls.draw_buttons()
 
