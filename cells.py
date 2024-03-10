@@ -17,7 +17,6 @@ class Cells(pygame.sprite.Sprite):
         self.initial_input: Dict[Tuple[int, int], int] = {}
 
         self.is_playing = False
-        self.next_state = None
 
         self.grid = grid
 
@@ -80,8 +79,8 @@ class Cells(pygame.sprite.Sprite):
         self.sparse_cells = {}
 
     def next(self):
-        self.is_playing = False
-        self.step()
+        if not self.is_playing:
+            self.step()
 
     def save(self, filename: str):
         save_state = [k for k, _ in self.sparse_cells.items()]

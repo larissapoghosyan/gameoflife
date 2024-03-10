@@ -15,27 +15,29 @@ class GameControls:
         self.draw_container()
 
         self.is_playing = False
-        self.play_button, self.play_button_rect = self.create_button(
-            "icons", "play.png", x_pos=self.container_width - 40, y_pos=20
+
+        self.font = pygame.font.Font(None, 18)
+        self.play_button, self.play_button_rect, self.play_text_rect = self.create_button(
+            "icons", "play.png", "Play", x_pos=self.container_width-80, y_pos=20
         )
-        self.pause_button, self.pause_button_rect = self.create_button(
-            "icons", "pause.png", x_pos=self.container_width - 40, y_pos=20
+        self.pause_button, self.pause_button_rect, self.pause_text_rect = self.create_button(
+            "icons", "pause.png", "Pause", x_pos=self.container_width-80, y_pos=20
         )
-        self.reset_button, self.reset_button_rect = self.create_button(
-            "icons", "reset.png", x_pos=self.container_width - 40, y_pos=70
+        self.reset_button, self.reset_button_rect, self.reset_text_rect = self.create_button(
+            "icons", "reset.png", "Reset", x_pos=self.container_width-80, y_pos=80
         )
-        self.clear_button, self.clear_button_rect = self.create_button(
-            "icons", "clear.png", x_pos=self.container_width - 40, y_pos=120
+        self.clear_button, self.clear_button_rect, self.clear_text_rect = self.create_button(
+            "icons", "clear.png", "Clear", x_pos=self.container_width-80, y_pos=140
         )
-        self.save_button, self.save_button_rect = self.create_button(
-            "icons", "save.png", x_pos=self.container_width - 40, y_pos=170
+        self.save_button, self.save_button_rect, self.save_text_rect = self.create_button(
+            "icons", "save.png", "Save", x_pos=self.container_width-80, y_pos=200
         )
-        self.upload_button, self.upload_button_rect = self.create_button(
-            "icons", "upload.png", x_pos=self.container_width - 40, y_pos=220
+        self.upload_button, self.upload_button_rect, self.upload_text_rect = self.create_button(
+            "icons", "upload.png", "Upload", x_pos=self.container_width-80, y_pos=260
         )
 
-        self.next_button, self.next_button_rect = self.create_button(
-            "icons", "next.png", x_pos=self.container_width - 40, y_pos=270
+        self.next_button, self.next_button_rect, self.next_text_rect = self.create_button(
+            "icons", "next.png", "Next", x_pos=self.container_width-80, y_pos=320
         )
 
         self.mouse_pos = (0, 0)
@@ -48,30 +50,56 @@ class GameControls:
         path = os.path.join(resourse_dir, dir_name, name)
         return pygame.image.load(path)
 
-    @classmethod
+    # def create_button(
+    #     self,
+    #     dir_name: str,
+    #     img_name: str,
+    #     text: str,
+    #     x_pos: int,
+    #     y_pos: int,
+    # ) -> Tuple[pygame.Surface, pygame.Rect, pygame.Rect]:
+    #     img_dimension = (30, 30)
+    #     button = self.laod_resource_image(dir_name, img_name)
+    #     button = pygame.transform.scale(button, img_dimension)
+    #     button_rect = button.get_rect()
+    #     button_rect.topright = (x_pos, y_pos)
+
+    #     # Calculate the text rect based on button dimensions
+    #     text_surface = self.font.render(text, True, (255, 255, 255)) # Make text white
+    #     text_rect = text_surface.get_rect()
+    #     text_rect.topleft = (button_rect.left, button_rect.bottom + 10) # Position it 10 pixels below the button
+
+    #     return button, button_rect, text_rect
     def create_button(
-        cls,
+        self,
         dir_name: str,
         img_name: str,
+        text: str,
         x_pos: int,
         y_pos: int,
-    ) -> Tuple[pygame.Surface, pygame.Rect]:
+    ) -> Tuple[pygame.Surface, pygame.Rect, pygame.Rect]:
         img_dimension = (30, 30)
-        button = cls.laod_resource_image(dir_name, img_name)
+        button = self.laod_resource_image(dir_name, img_name)
         button = pygame.transform.scale(button, img_dimension)
         button_rect = button.get_rect()
         button_rect.topright = (x_pos, y_pos)
-        return button, button_rect
+
+        # Calculate the text rect based on button dimensions
+        text_surface = self.font.render(text, True, (255, 255, 255)) # Make text white
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (button_rect.right + 10, button_rect.centery - text_rect.height // 2) # Position it 10 pixels to the right of the button
+
+        return button, button_rect, text_rect
 
     def draw_container(self):
         self.buffer_space = 20
-        self.container_width = self.screen_width // 7 - 2 * self.buffer_space
-        self.container_height = self.screen_width // 3.3 - 2 * self.buffer_space
+        self.container_width = self.screen_width // 8 - 2 * self.buffer_space
+        self.container_height = self.screen_width // 3 - 2 * self.buffer_space
 
         self.container_surface = pygame.Surface(
             (self.container_width, self.container_height)
         )
-        self.container_surface.fill((175, 238, 238, 128))  # Semi-transparent
+        self.container_surface.fill((0, 0, 0, 0))  # fully transparent container
         self.container_surface = (
             self.container_surface.convert_alpha()
         )  # make it transparent
@@ -81,48 +109,81 @@ class GameControls:
         )
 
     def draw_buttons(self):
-        # draw a clear contianer surface each time
+        # draw a clear container surface each time
         self.draw_container()
 
         if self.is_playing:
-            self.container_surface.blit(
-                self.pause_button, self.pause_button_rect.topleft
+            self.draw_button_with_text(
+                "Pause",
+                self.pause_button,
+                self.pause_button_rect,
+                self.pause_text_rect,
             )
         else:
-            self.container_surface.blit(
-                self.play_button, self.play_button_rect.topleft
+            self.draw_button_with_text(
+                "Play",
+                self.play_button,
+                self.play_button_rect,
+                self.play_text_rect,
             )
-        self.container_surface.blit(
-            self.reset_button, self.reset_button_rect.topleft
+
+        self.draw_button_with_text(
+            "Reset",
+            self.reset_button,
+            self.reset_button_rect,
+            self.reset_text_rect,
         )
-        self.container_surface.blit(
-            self.clear_button, self.clear_button_rect.topleft
+        self.draw_button_with_text(
+            "Clear",
+            self.clear_button,
+            self.clear_button_rect,
+            self.clear_text_rect,
         )
-        self.container_surface.blit(
-            self.save_button, self.save_button_rect.topleft
+        self.draw_button_with_text(
+            "Save",
+            self.save_button,
+            self.save_button_rect,
+            self.save_text_rect,
         )
-        self.container_surface.blit(
-            self.upload_button, self.upload_button_rect.topleft
+        self.draw_button_with_text(
+            "Upload",
+            self.upload_button,
+            self.upload_button_rect,
+            self.upload_text_rect,
         )
-        self.container_surface.blit(
-            self.next_button, self.next_button_rect.topleft
+        self.draw_button_with_text(
+            "Next",
+            self.next_button,
+            self.next_button_rect,
+            self.next_text_rect,
         )
 
         self.screen.blit(
             self.container_surface, self.container_surface_rect.topleft
         )  # topleft might be removed later, just experimenting rn
 
-    def convert_pixel_coords_to_game_coords(
-            self,
-            mouse_x: int,
-            mouse_y: int,
-            grid: 'Grid'
-    ) -> Tuple[int, int]:
+    def draw_button_with_text(self, text, button, button_rect, text_rect):
+        # Calculate the position and size of the button container
+        container_topleft = button_rect.topleft
+        container_size = (150, 150)  # setting fixed size of 100x100 pixels
 
-        return (
-            (mouse_y + grid.camera_y) // grid.viewScale,
-            (mouse_x + grid.camera_x) // grid.viewScale
+        # Draw the button container
+        pygame.draw.rect(
+            self.container_surface, (0, 206, 209, 200),
+            pygame.Rect(container_topleft, container_size)
         )
+
+        # Draw the button
+        self.container_surface.blit(button, button_rect.topleft)
+
+        # Draw the text
+        self.draw_text(text, text_rect.topleft)
+
+    def draw_text(self, text, position):
+        # Create a Surface with the text
+        text_surface = self.font.render(text, True, (255, 255, 255)) # Make text white
+        # Draw the text on the container surface
+        self.container_surface.blit(text_surface, position)
 
     def process_mouse_input(
             self,
