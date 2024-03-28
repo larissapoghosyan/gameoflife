@@ -2,6 +2,9 @@
 
 This project is a graphical implementation of Conway's Game of Life using Pygame, offering an interactive environment to play, visualize, and explore the behavior of cellular automata according to the iconic rules.
 
+
+<img src="https://github.com/larissapoghosyan/gameoflife/assets/43134338/93a89191-e1b6-4167-aaa3-7b7da3582e97" width="540">
+
 ## Interactive Control Dynamics
 - **Real-Time Simulation Control**: Easily play or pause the simulation.
 - **Cell Interaction**: Click on the grid to add or remove cells.
