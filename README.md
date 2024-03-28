@@ -22,29 +22,26 @@ This project is a graphical implementation of Conway's Game of Life using Pygame
 
   To mimic the dynamic zoom functionality akin to Google Maps, the game seamlessly integrates the real mouse position with its game world equivalent. This integration focuses on maintaining the pointer-centered zoom, requiring calculations to adjust the camera position according to the new view scale. <br /> Let's denote the initial screen position of the pointer as $(mouse\_x, mouse\_y)$, and the analogous game world positions as $(mouse\_u, mouse\_v)$, with the zoom factor and camera position represented by $viewscale$ and $(camera\_x, camera\_y)$, respectively. During zooming, centered on the pointer, $(mouse\_x, mouse\_y)$ and $(mouse\_u, mouse\_v)$ remain constant, while $viewscale$ changes to $viewscale'$. The objective is to calculate the new camera position, $(camera\_x', camera\_y')$, to keep the focus unchanged in the game world.
 
-  Given the relationship:<br />
-
-  $mouse\_u = \frac{(mouse\_x - camera\_x)}{viewscale}$ <br />
-
-  $mouse\_v = \frac{(mouse\_y - camera\_y)}{viewscale}$
-  <br><br>
+  Given the relationship:
+  $$mouse\_u = \frac{(mouse\_x - camera\_x)}{viewscale}$$
+  $$mouse\_v = \frac{(mouse\_y - camera\_y)}{viewscale}$$
+  <br>
 
   For the updated state:
 
-  $mouse\_u' = \frac{(mouse\_x - camera\_x')}{viewscale'}$ <br />
-
-  $mouse\_v' = \frac{(mouse\_y - camera\_y')}{viewscale'}$ <br />
+  $$mouse\_u' = \frac{(mouse\_x - camera\_x')}{viewscale'}$$
+  $$mouse\_v' = \frac{(mouse\_y - camera\_y')}{viewscale'}$$
   <br>
 
   Since $mouse\_u = mouse\_u'$ and $mouse\_v = mouse\_v'$ due to the zoom action being centered on the pointer, and knowing the new    $viewscale'$, the new camera positions can be deduced:
 
-  $camera\_x' = mouse\_x - viewscale' \cdot mouse\_u$ <br />
-  $camera\_x' = mouse\_x - (mouse\_x - camera\_x) \cdot \frac{viewscale'}{viewscale}$ <br />
+  $$camera\_x' = mouse\_x - viewscale' \cdot mouse\_u$$
+  $$camera\_x' = mouse\_x - (mouse\_x - camera\_x) \cdot \frac{viewscale'}{viewscale}$$
   <br>
 
-  Similarly, for $camera\_y'$: <br />
-  $camera\_y' = mouse\_y - (mouse\_y - camera\_y) \cdot \frac{viewscale'}{viewscale}$ <br />
-  <br><br>
+  Similarly, for $camera\_y'$:
+  $$camera\_y' = mouse\_y - (mouse\_y - camera\_y) \cdot \frac{viewscale'}{viewscale}$$
+  
   This mathematical approach ensures intuitive and cursor-centered zooming, enhancing the navigation experience.
 
 
@@ -54,11 +51,17 @@ This project is a graphical implementation of Conway's Game of Life using Pygame
 To run this project, you will need Python 3 and Pygame installed on your system.
 
 1. Clone the repository to your local machine:<br />
-`git clone <git@github.com:larissapoghosyan/gameoflife.git>`
-2. Install Pygame if you haven't already:<br />
-`pip install pygame`
+```sh
+git clone git@github.com:larissapoghosyan/gameoflife.git
+```
+3. Install Pygame if you haven't already:<br />
+```sh
+pip install pygame
+```
 
 ## Usage
 
-To start the game, navigate to the project directory in your terminal and run:<br />
-`python main.py`
+To start the game, navigate to the project directory in your terminal and run:
+```sh
+python main.py
+```
