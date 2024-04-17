@@ -19,9 +19,15 @@ This project is a graphical implementation of Conway's Game of Life using Pygame
 
 - **Step-through Debugging**: The "Step Over" feature offers a strategic tool for curious players, enabling them to observe the subsequent state of cells. This functionality serves as a debugging aid, offering insights into the dynamic changes of cell configurations with each generation.
 
+<img src="https://github.com/larissapoghosyan/gameoflife/assets/43134338/94b3f558-b0e1-445c-b886-a06de20fa93c" width="540">
+
 - **Serialization**: This implementation incorporates a thoughtful serialization approach that efficiently captures and preserves the current state of the game world, including the living cells and viewport settings. By clicking the save button, players can effortlessly save the entire state of the game, ensuring that when they return, they can pick up exactly where they left off, with the viewport and all game elements intact. This feature is designed to provide a seamless transition between sessions.
 
 - **Optimized Rendering with Infinite Exploration**: Despite the potentially vast size of the world, the game engine smartly renders only the visible portion of the viewport. This optimization ensures efficient performance while allowing the game to run in the background. The gameplay experience is enhanced with intuitive panning and zooming functionalities, reminiscent of navigating through Google Maps. Unfortunately, Street View is not available —though hopefully you will enjoy exploring the cellular cosmos just as much!
+
+<img src="https://github.com/larissapoghosyan/gameoflife/assets/43134338/22390692-c06a-4f86-a8de-3d6be7bb81af" width="540">
+
+
 
   To mimic the dynamic zoom functionality akin to Google Maps, the game seamlessly integrates the real mouse position with its game world equivalent. This integration focuses on maintaining the pointer-centered zoom, requiring calculations to adjust the camera position according to the new view scale. <br /> Let's denote the initial screen position of the pointer as $(mouse\_x, mouse\_y)$, and the analogous game world positions as $(mouse\_u, mouse\_v)$, with the zoom factor and camera position represented by $viewscale$ and $(camera\_x, camera\_y)$, respectively. During zooming, centered on the pointer, $(mouse\_x, mouse\_y)$ and $(mouse\_u, mouse\_v)$ remain constant, while $viewscale$ changes to $viewscale'$. The objective is to calculate the new camera position, $(camera\_x', camera\_y')$, to keep the focus unchanged in the game world.
 
